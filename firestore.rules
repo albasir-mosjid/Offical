@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ★ নিচের ইমেইলটি বদলে আপনার অ্যাডমিন ইমেইল দিন (Firebase-এ যে ইমেইল দিয়ে ইউজার বানিয়েছেন)
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'tarifulswork@gmail.com';
+    }
+
+    // ওয়েবসাইটের কনটেন্ট: সবাই পড়তে পারবে, শুধু অ্যাডমিন বদলাতে পারবে
+    match /site/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // রিভিউ: যে কেউ জমা দিতে পারবে (নির্দিষ্ট ছাঁচে), কিন্তু পড়া/বদলানো/মোছা শুধু অ্যাডমিন
+    match /reviews/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['rating', 'comment', 'lang', 'createdAt', 'read'])
+                    && request.resource.data.rating is int
+                    && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+                    && request.resource.data.comment is string
+                    && request.resource.data.comment.size() <= 1000
+                    && request.resource.data.read == false;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

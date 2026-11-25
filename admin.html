@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>অ্যাডমিন প্যানেল — আল-বাছির জামে মসজিদ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root { --emerald:#103D2B; --forest:#176B4A; --gold:#C6A36B; --gold-text:#8A6A2E; --ivory:#F7F5EF; --charcoal:#242B27; --muted:#5B645E; --border:#E4DFD3; --danger:#9A3B2E; --ok:#1F8059; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Hind Siliguri','Lato',system-ui,sans-serif; background: var(--ivory); color: var(--charcoal); line-height: 1.55; font-size: 16px; -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* Login */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.25rem; background: var(--emerald); }
+.login-card { width: min(100%, 400px); padding: 2rem 1.6rem; border-radius: 18px; background: #fff; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+.login-card h1 { font-size: 1.4rem; color: var(--emerald); margin-bottom: .2rem; }
+.login-card p.sub { color: var(--muted); font-size: .92rem; margin-bottom: 1.4rem; }
+label.f { display: block; font-weight: 600; font-size: .9rem; margin: .8rem 0 .3rem; }
+input[type=text], input[type=email], input[type=password], input[type=url], input[type=number], input[type=date], input[type=time], select, textarea {
+  width: 100%; padding: .65rem .8rem; border: 1.5px solid #D6D0C2; border-radius: 10px; background: #fff; min-height: 44px; }
+textarea { min-height: 84px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 3px rgba(23,107,74,.16); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: .55rem 1.2rem; border: 0; border-radius: 10px; font-weight: 700; background: var(--forest); color: #fff; }
+.btn:hover { background: var(--emerald); }
+.btn:disabled { opacity: .6; cursor: progress; }
+.btn.ghost { background: transparent; color: var(--forest); border: 1.5px solid var(--forest); }
+.btn.ghost:hover { background: var(--forest); color: #fff; }
+.btn.danger { background: var(--danger); }
+.btn.small { min-height: 34px; padding: .25rem .8rem; font-size: .88rem; }
+.msg { margin-top: .9rem; font-size: .92rem; min-height: 1.3em; }
+.msg.err { color: var(--danger); font-weight: 600; }
+.notice { padding: .8rem 1rem; border-radius: 10px; background: #FFF6E2; border: 1px solid #E8D5A5; color: #6b5420; font-size: .92rem; margin-bottom: 1rem; }
+
+/* App shell */
+.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: .8rem; padding: .6rem 1rem; background: var(--emerald); color: #fff; }
+.topbar h1 { font-size: .98rem; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar .who { font-size: .8rem; opacity: .75; display: none; }
+.topbar a, .topbar button { color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.3); border-radius: 8px; padding: .3rem .8rem; font-size: .85rem; text-decoration: none; min-height: 34px; }
+.layout { display: block; }
+.tabs { display: flex; gap: .4rem; overflow-x: auto; padding: .6rem .8rem; background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 46px; z-index: 15; }
+.tab { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: .45rem .9rem; border: 1.5px solid var(--border); border-radius: 999px; background: #fff; font-weight: 600; font-size: .92rem; color: var(--muted); white-space: nowrap; }
+.tab.active { background: var(--forest); border-color: var(--forest); color: #fff; }
+.badge { min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--danger); color: #fff; font-size: .75rem; line-height: 20px; text-align: center; }
+main { max-width: 900px; margin: 0 auto; padding: 1rem 1rem 7rem; }
+h2.title { font-size: 1.35rem; color: var(--emerald); margin-bottom: .3rem; }
+p.help { color: var(--muted); font-size: .92rem; margin-bottom: 1rem; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1rem; margin-bottom: 1rem; }
+.card h3 { font-size: 1.05rem; color: var(--emerald); margin-bottom: .5rem; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+@media (max-width: 560px) { .row2 { grid-template-columns: 1fr; gap: 0; } }
+.field { margin-bottom: .6rem; }
+.field > .lab { display: block; font-weight: 600; font-size: .88rem; margin-bottom: .25rem; }
+.field .hint { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+.sub-lab { display: block; font-size: .75rem; color: var(--gold-text); font-weight: 700; margin-bottom: .15rem; letter-spacing: .04em; }
+.check { display: flex; align-items: center; gap: .6rem; font-weight: 600; min-height: 44px; }
+.check input { width: 22px; height: 22px; accent-color: var(--forest); }
+.item { border: 1.5px solid var(--border); border-radius: 12px; background: #fff; margin-bottom: .6rem; }
+.item[open] { border-color: var(--gold); }
+.item > summary { display: flex; align-items: center; gap: .5rem; padding: .6rem .8rem; cursor: pointer; list-style: none; font-weight: 600; }
+.item > summary::-webkit-details-marker { display: none; }
+.item > summary .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item > summary .ctl { display: flex; gap: .25rem; }
+.ctl button { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 1rem; line-height: 1; }
+.ctl button:hover { background: var(--ivory); }
+.ctl button.del { color: var(--danger); }
+.item .body { padding: .2rem .9rem .8rem; border-top: 1px solid var(--border); }
+.chip { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: .72rem; font-weight: 700; background: #E6F2EC; color: var(--ok); margin-left: .4rem; }
+.chip.past { background: #EEE; color: #777; } .chip.sched { background: #FFF1CC; color: #8a6200; }
+.preview { display: block; width: 72px; height: 72px; margin-top: .4rem; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); background: #eee; }
+.savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; align-items: center; gap: .8rem; padding: .7rem 1rem; background: #fff; border-top: 1px solid var(--border); box-shadow: 0 -6px 20px rgba(0,0,0,.08); }
+.savebar .st { flex: 1; font-size: .9rem; color: var(--muted); }
+.savebar .st.dirty { color: var(--gold-text); font-weight: 700; }
+.toast { position: fixed; left: 50%; bottom: 5rem; transform: translateX(-50%); z-index: 50; max-width: 90vw; padding: .7rem 1.2rem; border-radius: 12px; background: var(--emerald); color: #fff; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+.toast.err { background: var(--danger); }
+table.pt { width: 100%; border-collapse: collapse; }
+table.pt th, table.pt td { padding: .45rem .3rem; text-align: left; vertical-align: middle; font-size: .92rem; }
+table.pt th { font-size: .78rem; color: var(--gold-text); }
+table.pt tr + tr td { border-top: 1px solid var(--border); }
+.rv { border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 12px; background: #fff; padding: .8rem 1rem; margin-bottom: .6rem; }
+.rv.unread { border-left-color: var(--gold); background: #FFFCF3; }
+.rv .top { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.stars { color: var(--gold); font-size: 1.15rem; letter-spacing: 2px; }
+.rv .meta { font-size: .8rem; color: var(--muted); }
+.rv p { margin: .4rem 0 .6rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rv .acts { display: flex; gap: .5rem; }
+.summary { display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: baseline; margin-bottom: .8rem; }
+.summary .big { font-size: 2rem; font-weight: 700; color: var(--emerald); }
+@media (min-width: 900px) { .topbar .who { display: block; } }
+</style>
+</head>
+<body>
+<div id="login" class="login-wrap">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <h1>🕌 অ্যাডমিন প্যানেল</h1>
+    <p class="sub">আল-বাছির জামে মসজিদ — শুধু অ্যাডমিনের জন্য</p>
+    <div class="notice" id="cfgWarn" hidden>এখনো <b>firebase-config.js</b> ফাইলে Firebase-এর তথ্য (apiKey, projectId) বসানো হয়নি। <b>SETUP-BN.md</b> গাইডের ধাপগুলো শেষ করুন।</div>
+    <label class="f" for="email">ইমেইল</label>
+    <input type="email" id="email" autocomplete="username" required>
+    <label class="f" for="password">পাসওয়ার্ড</label>
+    <input type="password" id="password" autocomplete="current-password" required>
+    <button class="btn" id="loginBtn" type="submit" style="width:100%;margin-top:1.1rem">লগইন করুন</button>
+    <p class="msg" id="loginMsg" role="alert"></p>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="topbar">
+    <h1>🕌 অ্যাডমিন প্যানেল</h1>
+    <span class="who" id="who"></span>
+    <a id="viewSite" href="index.html" target="_blank" rel="noopener">ওয়েবসাইট ↗</a>
+    <button id="logout" type="button">লগআউট</button>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="বিভাগ"></nav>
+  <main id="main"></main>
+  <div class="savebar" id="savebar">
+    <span class="st" id="saveState">সব পরিবর্তন সংরক্ষিত</span>
+    <button class="btn" id="saveBtn" type="button">💾 সংরক্ষণ করুন</button>
+  </div>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="firebase-config.js"></script>
+<script>
+(function () {
+'use strict';
+const CFG = window.SITE_CONFIG || {};
+const DEFAULTS = {"version": 1, "ticker": {"enabled": true, "items": [{"en": "Jummah prayer every Friday at {jummah} — all are welcome", "bn": "প্রতি শুক্রবার {jummah} জুম্মার নামাজ — সকলকে স্বাগত", "link": "", "from": "", "to": ""}, {"en": "Prayer times for Dhaka are calculated and updated every day", "bn": "ঢাকার নামাজের সময় প্রতিদিন হিসাব করে হালনাগাদ করা হয়", "link": "", "from": "", "to": ""}]}, "announce": {"a": {"en": "Welcome to Al-Basir Jame Masjid", "bn": "আল-বাছির জামে মসজিদে স্বাগতম"}, "b": {"en": "Jummah Prayer at {jummah} every Friday", "bn": "প্রতি শুক্রবার জুম্মার নামাজ {jummah}"}, "c": {"en": "All are welcome to join us in worship", "bn": "সকলকে আমাদের সাথে ইবাদতে যোগ দিতে স্বাগত"}}, "hero": {"subtitle": {"en": "A place of peace, spirituality, and community in East Ashkona, Dhaka, Bangladesh", "bn": "পূর্ব আশকোনা, ঢাকা"}}, "prayer": {"iqamah": {"fajr": {"mode": "offset", "offset": 20, "fixed": ""}, "dhuhr": {"mode": "offset", "offset": 15, "fixed": ""}, "asr": {"mode": "offset", "offset": 15, "fixed": ""}, "maghrib": {"mode": "offset", "offset": 5, "fixed": ""}, "isha": {"mode": "offset", "offset": 15, "fixed": ""}}, "jummah": {"time": "13:30"}, "hijriAdjust": 0}, "about": {"p1": {"en": "Our mosque was established in 2014. The five daily prayers are performed here regularly and on time. We have a strong and efficient management committee that ensures all activities are carried out smoothly. We are a peaceful community committed to religious values.", "bn": "আমাদের মসজিদটি ২০১৪ সালে প্রতিষ্ঠিত হয়। এখানে নিয়মিতভাবে পাঁচ ওয়াক্ত নামাজ যথাসময়ে আদায় করা হয়। আমাদের একটি শক্তিশালী ও দক্ষ পরিচালনা কমিটি রয়েছে, যারা মসজিদের সকল কার্যক্রম সুন্দরভাবে পরিচালনা করে। আমরা সবাই শান্তিপ্রিয় এবং ধর্মীয় মূল্যবোধে বিশ্বাসী।"}, "p2": {"en": "We welcome people of all backgrounds to join us in worship and community activities. Our mission is to foster understanding, unity, and spiritual development within our congregation — upholding the values of Islam with sincerity and compassion.", "bn": "আমরা সকল পটভূমির মানুষকে আমাদের সাথে ইবাদত ও সামাজিক কার্যক্রমে যোগ দিতে স্বাগত জানাই। আমাদের লক্ষ্য হলো আমাদের সংগঠনের মধ্যে সমঝোতা, ঐক্য ও আধ্যাত্মিক উন্নয়ন বৃদ্ধি করা।"}}, "services": [{"id": "sv1", "icon": "star", "title": {"en": "Daily Prayers", "bn": "দৈনিক নামাজ"}, "text": {"en": "Five daily prayers led by our Imam — open to all worshippers ❤️.", "bn": "আমাদের ইমামের নেতৃত্বে পাঁচ ওয়াক্ত নামাজ — সকল মুসল্লিদের জন্য উন্মুক্ত ❤️।"}, "auto": ""}, {"id": "sv2", "icon": "calendar", "title": {"en": "Jummah Prayer", "bn": "জুম্মার নামাজ"}, "text": {"en": "", "bn": ""}, "auto": "jummah"}], "events": [{"id": "e1", "title": {"en": "Eid al-Adha", "bn": "ঈদুল আযহা"}, "text": {"en": "Eid al-Adha teaches the great lesson of sacrifice, faith, and complete submission to Allah — the story of Prophet Ibrahim (A.S.) reminds us that true love and obedience should be for Allah alone.", "bn": "ঈদুল আযহা ত্যাগ, ঈমান ও আল্লাহর প্রতি পূর্ণ আত্মসমর্পণের মহান শিক্ষা দেয়— নবী ইব্রাহিম (আ.)-এর কোরবানির ইতিহাস আমাদের মনে করিয়ে দেয়, সত্যিকার ভালোবাসা ও আনুগত্য কেবল আল্লাহর জন্যই হওয়া উচিত।"}, "tag": {"en": "Community", "bn": "সামাজিক"}, "meta": {"en": "7:30 AM — Eid Prayer", "bn": "সকাল ৭:৩০ — ঈদের নামাজ"}, "start": "2026-05-26", "end": "2026-05-30", "showFrom": ""}], "committee": [{"id": "m1", "name": {"en": "H M Mosharraf", "bn": "এইচ এম মোশারফ"}, "title": {"en": "Trustee", "bn": "মোতাওয়াল্লী"}, "photo": "https://i.postimg.cc/JD0hhdRr/photo.jpg", "featured": true}, {"id": "m2", "name": {"en": "Name", "bn": "নাম"}, "title": {"en": "President", "bn": "সভাপতি"}, "photo": "", "featured": false}, {"id": "m3", "name": {"en": "Name", "bn": "নাম"}, "title": {"en": "Vice President", "bn": "সহ সভাপতি"}, "photo": "", "featured": false}, {"id": "m4", "name": {"en": "Kamal Uddin", "bn": "কামাল উদ্দিন"}, "title": {"en": "Secretary", "bn": "সেক্রেটারি"}, "photo": "", "featured": false}, {"id": "m5", "name": {"en": "SM Ikbal Ahamed", "bn": "এস এম ইকবাল আহমেদ"}, "title": {"en": "Joint Secretary", "bn": "সহ সেক্রেটারি"}, "photo": "", "featured": false}, {"id": "m6", "name": {"en": "Harun Ar Rashid", "bn": "হারুন অর রশীদ"}, "title": {"en": "Cashier", "bn": "ক্যাশিয়ার"}, "photo": "", "featured": false}, {"id": "m7", "name": {"en": "TBA", "bn": "TBA"}, "title": {"en": "Asst. Cashier", "bn": "সহ ক্যাশিয়ার"}, "photo": "", "featured": false}], "staff": [{"id": "st1", "role": {"en": "Imam", "bn": "ইমাম"}, "name": {"en": "Name", "bn": "নাম"}, "info": {"en": "", "bn": ""}, "photo": ""}, {"id": "st2", "role": {"en": "Muazzin", "bn": "মুয়াজ্জিন"}, "name": {"en": "Name", "bn": "নাম"}, "info": {"en": "", "bn": ""}, "photo": ""}, {"id": "st3", "role": {"en": "Khadem", "bn": "খাদেম"}, "name": {"en": "Name", "bn": "নাম"}, "info": {"en": "", "bn": ""}, "photo": ""}], "volunteers": [{"id": "v1", "name": {"en": "Faizullah Faisal", "bn": "ফাইজুল্লাহ ফয়সাল"}, "since": "2014", "tag": {"en": "", "bn": ""}, "photo": ""}, {"id": "v2", "name": {"en": "MD. Tariful Islam", "bn": "মোঃ তারিফুল ইসলাম"}, "since": "2014", "tag": {"en": "Website Designer", "bn": "ওয়েবসাইট ডিজাইনার"}, "photo": ""}, {"id": "v3", "name": {"en": "Iftakhar Mubin", "bn": "ইফতাখার মুবিন"}, "since": "2014", "tag": {"en": "", "bn": ""}, "photo": ""}, {"id": "v4", "name": {"en": "Ah Jihad", "bn": "এ এইচ জিহাদ"}, "since": "2014", "tag": {"en": "", "bn": ""}, "photo": ""}, {"id": "v5", "name": {"en": "Nuhaz Islam", "bn": "নুহাজ ইসলাম"}, "since": "2025", "tag": {"en": "", "bn": ""}, "photo": ""}], "gallery": [{"id": "g1", "category": "interior", "title": {"en": "Mosque Interior", "bn": "Mosque Interior"}, "caption": {"en": "Al-Basir Jame Masjid", "bn": "Al-Basir Jame Masjid"}, "image": "", "pos": ""}, {"id": "g2", "category": "interior", "title": {"en": "Mosque Interior", "bn": "Mosque Interior"}, "caption": {"en": "Al-Basir Jame Masjid", "bn": "Al-Basir Jame Masjid"}, "image": "", "pos": ""}, {"id": "g3", "category": "events", "title": {"en": "Architecture Detail", "bn": "Architecture Detail"}, "caption": {"en": "Islamic geometric patterns", "bn": "Islamic geometric patterns"}, "image": "https://d2xsxph8kpxj0f.cloudfront.net/310519663438579788/fKMoLKsyREGyS98JKRT3vg/mosque_prayer_hall_detail-ZnfnSENx6jTe2HgYBxNyPt.webp", "pos": "center top"}, {"id": "g4", "category": "events", "title": {"en": "Community Space", "bn": "Community Space"}, "caption": {"en": "Events & gatherings", "bn": "Events & gatherings"}, "image": "https://d2xsxph8kpxj0f.cloudfront.net/310519663438579788/fKMoLKsyREGyS98JKRT3vg/mosque_hero_background-Gfhfrhu26mPz2u8Nz9EbaX.webp", "pos": "center bottom"}], "contributes": [{"id": "c1", "image": "https://i.postimg.cc/L5Gjx0W4/image.png", "title": {"en": "Our Contributes", "bn": "আমাদের অবদান"}, "text": {"en": "Water distribution among the thirsty — May 2024", "bn": "তৃষ্ণার্তদের মাঝে পানি বিতরণ — মে ২০২৪"}, "link": "https://www.facebook.com/share/p/1JdsDFYJfM/"}, {"id": "c2", "image": "https://i.postimg.cc/Xq5g6bdy/image.png", "title": {"en": "Our Contributes", "bn": "আমাদের অবদান"}, "text": {"en": "Flood relief — food & essentials distributed to affected families", "bn": "বন্যা ত্রাণ — ক্ষতিগ্রস্ত পরিবারদের মাঝে খাদ্য ও প্রয়োজনীয় সামগ্রী বিতরণ"}, "link": "https://www.facebook.com/share/p/1DJNi5iFfk/"}], "contact": {"address": {"en": "Al-Basir Masjid Road, East Ashkona\nDhaka, Bangladesh", "bn": "আল-বাছির মসজিদ রোড, পূর্ব আশকোনা\nঢাকা, বাংলাদেশ"}, "addressShort": {"en": "East Ashkona, Dhaka-1230", "bn": "পূর্ব আশকোনা, ঢাকা-১২৩০"}, "email": "info@albasirmasjid.com", "note": {"en": "We respond within 24 hours", "bn": "২৪ ঘণ্টার মধ্যে উত্তর দেওয়া হয়"}, "mapUrl": "https://maps.google.com/?q=Al-Basir+Jame+Mosque+Dhaka", "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d273.8429472918267!2d90.42014635063762!3d23.851386722084676!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c70035eb435d%3A0x3753f48ae83cba8e!2sAl-%20Basir%20Jame%20Mosque!5e0!3m2!1sen!2sbd!4v1775848794753!5m2!1sen!2sbd"}, "footer": {"about": {"en": "Follow us on social media for regular updates on duas, hadiths, and mosque news.", "bn": "দোয়া, হাদীস ও মসজিদ সম্পর্কিত নিয়মিত আপডেট পেতে আমাদের সামাজিক যোগাযোগ মাধ্যমে যুক্ত হতে পারেন।"}, "social": {"facebook": "https://www.facebook.com/albasir.masjid", "instagram": "https://www.instagram.com/albasirmasjid/", "youtube": "https://www.youtube.com/@Al-BasirJameMosque", "x": "https://x.com/albasirmasjid"}}};
+const KEY = CFG.apiKey || '', PROJECT = CFG.projectId || '';
+const BASE = 'https://firestore.googleapis.com/v1/projects/' + encodeURIComponent(PROJECT || 'x') + '/databases/(default)/documents';
+const EMBEDDED = new Set(['g1', 'g2', 'v1', 'v2', 'v3', 'v4', 'v5']);   // photos that are built into index.html
+const $ = (s, r) => (r || document).querySelector(s);
+const clone = o => JSON.parse(JSON.stringify(o));
+const uid = () => 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const bnDigits = v => String(v).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+
+function el(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  if (props) for (const k in props) {
+    const v = props[k];
+    if (k === 'class') e.className = v;
+    else if (k === 'text') e.textContent = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) e.setAttribute(k, v === true ? '' : v);
+  }
+  kids.flat(Infinity).forEach(c => { if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(c)); });
+  return e;
+}
+function get(o, path) { return path.split('.').reduce((a, k) => (a == null ? a : a[k]), o); }
+function set(o, path, val) { const ks = path.split('.'); const last = ks.pop(); const t = ks.reduce((a, k) => (a[k] == null ? (a[k] = {}) : a[k]), o); t[last] = val; }
+
+let auth = null, content = null, dirty = false, reviews = [], tab = 'reviews', rvFilter = 'all', contentMissing = false, saving = false;
+const openIds = new Set();
+
+function toast(msg, err) { const t = $('#toast'); t.textContent = msg; t.className = 'toast' + (err ? ' err' : ''); t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, err ? 6000 : 3500); }
+function markDirty(v = true) { dirty = v; const s = $('#saveState'); s.textContent = v ? '● অসংরক্ষিত পরিবর্তন আছে' : 'সব পরিবর্তন সংরক্ষিত'; s.className = 'st' + (v ? ' dirty' : ''); }
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+// ───────── Firebase (plain REST) ─────────
+const AUTH_MSG = { INVALID_LOGIN_CREDENTIALS: 'ইমেইল বা পাসওয়ার্ড ভুল।', EMAIL_NOT_FOUND: 'ইমেইল বা পাসওয়ার্ড ভুল।', INVALID_PASSWORD: 'ইমেইল বা পাসওয়ার্ড ভুল।', INVALID_EMAIL: 'ইমেইল ঠিকভাবে লিখুন।', USER_DISABLED: 'এই অ্যাকাউন্ট বন্ধ করা আছে।', TOO_MANY_ATTEMPTS_TRY_LATER: 'অনেকবার ভুল হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।' };
+function saveAuth() { try { auth ? localStorage.setItem('masjid-admin-auth', JSON.stringify(auth)) : localStorage.removeItem('masjid-admin-auth'); } catch (e) {} }
+async function signIn(email, password) {
+  const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + encodeURIComponent(KEY), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, returnSecureToken: true }) });
+  const j = await r.json();
+  if (!r.ok) { const m = (j.error && j.error.message || '').split(' ')[0]; throw new Error(AUTH_MSG[m] || 'লগইন করা যায়নি। ইন্টারনেট ও সেটিংস দেখুন।'); }
+  auth = { idToken: j.idToken, refreshToken: j.refreshToken, exp: Date.now() + (+j.expiresIn) * 1000, email: j.email || email }; saveAuth();
+}
+async function ensureToken() {
+  if (!auth) throw new Error('login');
+  if (Date.now() > auth.exp - 60000) {
+    const r = await fetch('https://securetoken.googleapis.com/v1/token?key=' + encodeURIComponent(KEY), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(auth.refreshToken) });
+    if (!r.ok) { auth = null; saveAuth(); throw new Error('login'); }
+    const j = await r.json(); auth = { ...auth, idToken: j.id_token, refreshToken: j.refresh_token || auth.refreshToken, exp: Date.now() + (+j.expires_in) * 1000 }; saveAuth();
+  }
+  return auth.idToken;
+}
+async function api(path, o = {}) {
+  const headers = {}; if (o.body) headers['Content-Type'] = 'application/json';
+  if (o.auth !== false) headers.Authorization = 'Bearer ' + await ensureToken();
+  const r = await fetch(BASE + '/' + path + '?' + (o.query ? o.query + '&' : '') + 'key=' + encodeURIComponent(KEY), { method: o.method || 'GET', headers, body: o.body ? JSON.stringify(o.body) : undefined });
+  if (r.status === 404 && o.allow404) return null;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error((j.error && j.error.message) || ('HTTP ' + r.status)); e.status = r.status; throw e; }
+  return j;
+}
+function parseReview(d) { const f = d.fields || {}; return { id: d.name.split('/').pop(), rating: +((f.rating && f.rating.integerValue) || 0), comment: (f.comment && f.comment.stringValue) || '', lang: (f.lang && f.lang.stringValue) || '', createdAt: (f.createdAt && f.createdAt.timestampValue) || '', read: !!(f.read && f.read.booleanValue) }; }
+async function fetchReviews() {
+  const out = []; let token = '';
+  for (let i = 0; i < 5; i++) {
+    const j = await api('reviews', { query: 'orderBy=' + encodeURIComponent('createdAt desc') + '&pageSize=100' + (token ? '&pageToken=' + encodeURIComponent(token) : '') });
+    (j.documents || []).forEach(d => out.push(parseReview(d)));
+    token = j.nextPageToken; if (!token) break;
+  }
+  return out;
+}
+async function loadContent() {
+  const j = await api('site/content', { auth: false, allow404: true });
+  const s = j && j.fields && j.fields.json && j.fields.json.stringValue;
+  let c = null; if (s) { try { c = JSON.parse(s); } catch (e) {} }
+  contentMissing = !c;
+  const out = clone(DEFAULTS);
+  if (c) Object.keys(c).forEach(k => { out[k] = c[k]; });
+  return out;
+}
+function validate() {
+  const bad = [];
+  content.events.forEach((e, i) => { if (!e.start) bad.push('ইভেন্ট #' + (i + 1) + ': শুরুর তারিখ দিন।'); else { if (!e.end) e.end = e.start; if (e.end < e.start) bad.push('ইভেন্ট "' + (e.title.bn || e.title.en || i + 1) + '": শেষ তারিখ শুরুর আগে হতে পারে না।'); } });
+  Object.entries(content.prayer.iqamah).forEach(([k, v]) => { if (v.mode === 'fixed' && !/^\d{1,2}:\d{2}$/.test(v.fixed || '')) bad.push('নামাজের সময়: "' + k + '"-এর নির্দিষ্ট সময় দিন।'); });
+  if (!/^\d{1,2}:\d{2}$/.test(content.prayer.jummah.time || '')) bad.push('জুম্মার সময় দিন।');
+  return bad;
+}
+async function saveContent() {
+  if (saving) return;
+  const bad = validate(); if (bad.length) { toast(bad[0], true); return; }
+  saving = true; const btn = $('#saveBtn'); btn.disabled = true; btn.textContent = 'সংরক্ষণ হচ্ছে…';
+  try {
+    await api('site/content', { method: 'PATCH', query: 'updateMask.fieldPaths=json&updateMask.fieldPaths=updatedAt', body: { fields: { json: { stringValue: JSON.stringify(content) }, updatedAt: { stringValue: new Date().toISOString() } } } });
+    markDirty(false); contentMissing = false; toast('✓ সংরক্ষিত হয়েছে — ওয়েবসাইটে নতুন করে খুললেই বদলে যাবে।'); renderTab();
+  } catch (e) { toast(e.status === 403 ? 'অনুমতি নেই — firestore.rules-এ আপনার অ্যাডমিন ইমেইল ঠিক আছে কিনা দেখুন।' : 'সংরক্ষণ করা গেল না: ' + e.message, true); }
+  finally { saving = false; btn.disabled = false; btn.textContent = '💾 সংরক্ষণ করুন'; }
+}
+
+// ───────── field builders ─────────
+function wrap(label, hint, ...inner) { return el('div', { class: 'field' }, label ? el('span', { class: 'lab', text: label }) : null, inner, hint ? el('div', { class: 'hint', text: hint }) : null); }
+function input(type, obj, key, o = {}) {
+  const i = el('input', { type, value: get(obj, key) ?? '', placeholder: o.placeholder || '', min: o.min, max: o.max, step: o.step, 'aria-label': o.label || key });
+  i.addEventListener('input', () => { set(obj, key, type === 'number' ? (i.value === '' ? '' : +i.value) : i.value); markDirty(); if (o.onchange) o.onchange(); });
+  return i;
+}
+function fText(obj, key, label, o = {}) { return wrap(label, o.hint, input(o.type || 'text', obj, key, { ...o, label })); }
+function fArea(obj, key, label, o = {}) { const t = el('textarea', { 'aria-label': label, rows: o.rows || 3 }); t.value = get(obj, key) ?? ''; t.addEventListener('input', () => { set(obj, key, t.value); markDirty(); }); return wrap(label, o.hint, t); }
+function fBi(obj, key, label, o = {}) {
+  if (!get(obj, key) || typeof get(obj, key) !== 'object') set(obj, key, { en: '', bn: '' });
+  const mk = (lang, sub) => { const v = get(obj, key); const c = o.area ? el('textarea', { rows: o.rows || 3, 'aria-label': label + ' ' + sub }) : el('input', { type: 'text', 'aria-label': label + ' ' + sub, placeholder: o.placeholder || '' }); c.value = v[lang] || ''; c.addEventListener('input', () => { get(obj, key)[lang] = c.value; markDirty(); if (o.onchange) o.onchange(); }); return el('div', null, el('span', { class: 'sub-lab', text: sub }), c); };
+  return wrap(label, o.hint, el('div', { class: 'row2' }, mk('en', 'English'), mk('bn', 'বাংলা')));
+}
+function fToggle(obj, key, label, o = {}) { const c = el('input', { type: 'checkbox' }); c.checked = !!get(obj, key); c.addEventListener('change', () => { set(obj, key, c.checked); markDirty(); if (o.onchange) o.onchange(); }); return el('div', { class: 'field' }, el('label', { class: 'check' }, c, label), o.hint ? el('div', { class: 'hint', text: o.hint }) : null); }
+function fSelect(obj, key, label, options, o = {}) { const s = el('select', { 'aria-label': label }, options.map(([v, t]) => el('option', { value: v, text: t }))); s.value = String(get(obj, key) ?? options[0][0]); s.addEventListener('change', () => { set(obj, key, o.number ? +s.value : s.value); markDirty(); if (o.onchange) o.onchange(); }); return wrap(label, o.hint, s); }
+function fImage(obj, key, label, item, o = {}) {
+  const inp = input('url', obj, key, { label, placeholder: 'https://… অথবা images/ছবির-নাম.jpg' });
+  const pv = el('img', { class: 'preview', alt: '', hidden: true }); const hintEl = el('div', { class: 'hint' });
+  const refresh = () => { const v = (get(obj, key) || '').trim(); pv.hidden = !v; if (v) pv.src = v; hintEl.textContent = !v && item && EMBEDDED.has(item.id) ? '✓ এই মুহূর্তে ওয়েবসাইটের ভিতরে থাকা ডিফল্ট ছবি দেখানো হচ্ছে। বদলাতে চাইলে ছবির লিংক দিন।' : (o.hint || 'ছবির লিংক বসান। (কীভাবে ছবি যোগ করবেন তা "সাহায্য" ট্যাবে আছে)'); };
+  inp.addEventListener('input', refresh); pv.addEventListener('error', () => { pv.hidden = true; }); refresh();
+  return el('div', { class: 'field' }, el('span', { class: 'lab', text: label }), inp, pv, hintEl);
+}
+function listEditor(arr, cfg, rerender) {
+  const box = el('div');
+  arr.forEach((it, i) => {
+    if (!it.id) it.id = uid();
+    const det = el('details', { class: 'item' }); det.open = openIds.has(it.id);
+    det.addEventListener('toggle', () => { det.open ? openIds.add(it.id) : openIds.delete(it.id); });
+    const t = el('span', { class: 't' }); const setTitle = () => { t.replaceChildren(...[].concat(cfg.title(it, i))); }; setTitle();
+    const b = (txt, fn, cls, label, dis) => el('button', { type: 'button', class: cls || '', 'aria-label': label, disabled: dis, onclick: e => { e.preventDefault(); e.stopPropagation(); fn(); } }, txt);
+    const ctl = el('span', { class: 'ctl' },
+      b('↑', () => { [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; markDirty(); rerender(); }, '', 'উপরে নিন', i === 0),
+      b('↓', () => { [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; markDirty(); rerender(); }, '', 'নিচে নিন', i === arr.length - 1),
+      b('✕', () => { if (confirm('এটি মুছে ফেলবেন?')) { arr.splice(i, 1); markDirty(); rerender(); } }, 'del', 'মুছুন'));
+    det.append(el('summary', null, t, ctl), el('div', { class: 'body' }, cfg.fields(it, setTitle)));
+    box.append(det);
+  });
+  box.append(el('button', { type: 'button', class: 'btn ghost', onclick: () => { const n = cfg.newItem(); n.id = n.id || uid(); arr.push(n); openIds.add(n.id); markDirty(); rerender(); } }, '＋ ' + cfg.addLabel));
+  return box;
+}
+function section(title, help, ...kids) { return el('div', null, el('h2', { class: 'title', text: title }), help ? el('p', { class: 'help', text: help }) : null, kids); }
+const bn = o => (o && (o.bn || o.en)) || '';
+
+// ───────── tabs ─────────
+const TABS = [['reviews', '⭐', 'রিভিউ'], ['ticker', '📰', 'নিউজ টিকার'], ['prayer', '🕌', 'নামাজের সময়'], ['events', '📅', 'ইভেন্ট'], ['home', '🏠', 'হোম ও পরিচিতি'], ['services', '🧰', 'সেবা'], ['committee', '👥', 'কমিটি'], ['staff', '🕋', 'ইমাম ও খাদেম'], ['volunteers', '🤝', 'স্বেচ্ছাসেবক'], ['gallery', '🖼️', 'গ্যালারি'], ['contact', '☎️', 'যোগাযোগ ও ফুটার'], ['help', '❓', 'সাহায্য']];
+function renderTabs() {
+  const unread = reviews.filter(r => !r.read).length;
+  $('#tabs').replaceChildren(...TABS.map(([id, ic, lb]) => el('button', { type: 'button', role: 'tab', class: 'tab' + (tab === id ? ' active' : ''), 'aria-selected': String(tab === id), onclick: () => { tab = id; renderTabs(); renderTab(); window.scrollTo(0, 0); } }, ic + ' ' + lb, id === 'reviews' && unread ? el('span', { class: 'badge', text: String(unread) }) : null)));
+  $('#savebar').hidden = tab === 'reviews' || tab === 'help';
+}
+function renderTab() {
+  const m = $('#main'); const builders = { reviews: tabReviews, ticker: tabTicker, prayer: tabPrayer, events: tabEvents, home: tabHome, services: tabServices, committee: tabCommittee, staff: tabStaff, volunteers: tabVolunteers, gallery: tabGallery, contact: tabContact, help: tabHelp };
+  const y = window.scrollY; const banner = contentMissing && tab !== 'reviews' && tab !== 'help' ? el('div', { class: 'notice', text: 'ℹ️ এখনো কিছু সংরক্ষণ করা হয়নি — নিচে ওয়েবসাইটের বর্তমান লেখাগুলো দেখানো হচ্ছে। বদলে "সংরক্ষণ করুন" চাপলে ওয়েবসাইটে কার্যকর হবে।' }) : null; m.replaceChildren(...[banner, builders[tab]()].filter(Boolean)); window.scrollTo(0, y);
+}
+const rr = () => renderTab();
+
+function tabTicker() {
+  const t = content.ticker; t.items = t.items || [];
+  return section('নিউজ টিকার', 'ওয়েবসাইটের একদম উপরে চলমান খবরের লাইন। প্রতিটি খবরের জন্য চাইলে শুরু ও শেষ তারিখ দিতে পারেন — তারিখ শেষ হলে নিজে থেকে সরে যাবে।',
+    el('div', { class: 'card' }, fToggle(t, 'enabled', 'নিউজ টিকার চালু থাকুক')),
+    listEditor(t.items, { addLabel: 'নতুন খবর যোগ করুন', newItem: () => ({ en: '', bn: '', link: '', from: '', to: '' }),
+      title: it => [bn(it) || 'নতুন খবর'],
+      fields: (it, st) => [fTickerText(it, st), fText(it, 'link', 'লিংক (ঐচ্ছিক)', { type: 'url', hint: 'খবরে ক্লিক করলে যেখানে যাবে। যেমন https://… অথবা #events' }), el('div', { class: 'row2' }, fText(it, 'from', 'কবে থেকে দেখাবে (ঐচ্ছিক)', { type: 'date' }), fText(it, 'to', 'কবে পর্যন্ত দেখাবে (ঐচ্ছিক)', { type: 'date' }))] }, rr),
+    el('p', { class: 'help', text: 'টিপস: লেখার মধ্যে {jummah} লিখলে জুম্মার সময় নিজে বসে যাবে (যেমন: "প্রতি শুক্রবার {jummah} জুম্মার নামাজ")।' }));
+}
+function fTickerText(it, st) {
+  const mk = (lang, sub) => { const c = el('input', { type: 'text', 'aria-label': 'খবর ' + sub }); c.value = it[lang] || ''; c.addEventListener('input', () => { it[lang] = c.value; markDirty(); st(); }); return el('div', null, el('span', { class: 'sub-lab', text: sub }), c); };
+  return wrap('খবরের লেখা', null, el('div', { class: 'row2' }, mk('en', 'English'), mk('bn', 'বাংলা')));
+}
+const PRAYERS = [['fajr', 'ফজর'], ['dhuhr', 'যোহর'], ['asr', 'আসর'], ['maghrib', 'মাগরিব'], ['isha', 'ইশা']];
+function tabPrayer() {
+  const p = content.prayer;
+  const cards = PRAYERS.map(([k, name]) => {
+    const v = p.iqamah[k]; const off = el('div'), fix = el('div');
+    const sync = () => { off.hidden = v.mode === 'fixed'; fix.hidden = v.mode !== 'fixed'; };
+    off.append(fText(v, 'offset', 'ওয়াক্ত শুরুর কত মিনিট পরে জামাত?', { type: 'number', min: 0, max: 180, hint: 'ওয়াক্তের সময় ওয়েবসাইট নিজেই হিসাব করে — আপনি শুধু জামাতের ব্যবধান দিন।' }));
+    fix.append(fText(v, 'fixed', 'জামাতের নির্দিষ্ট সময়', { type: 'time', hint: 'প্রতিদিন এই সময়টাই দেখাবে।' }));
+    const c = el('div', { class: 'card' }, el('h3', { text: name }), fSelect(v, 'mode', 'জামাতের সময় কীভাবে ঠিক হবে', [['offset', 'ওয়াক্তের কয়েক মিনিট পরে'], ['fixed', 'প্রতিদিন নির্দিষ্ট সময়']], { onchange: sync }), off, fix); sync(); return c;
+  });
+  return section('নামাজের সময়সূচি', 'ওয়াক্তের (শুরু ও শেষ) সময় ওয়েবসাইট প্রতিদিন নিজে হিসাব করে। এখানে জামাতের সময় ও জুম্মার সময় ঠিক করুন।', cards,
+    el('div', { class: 'card' }, el('h3', { text: 'জুম্মা' }), fText(p.jummah, 'time', 'জুম্মার জামাতের সময়', { type: 'time', hint: 'ওয়েবসাইটের নামাজের ছক, উপরের ঘোষণা ও "সেবা" অংশে জুম্মার সব লেখা এই সময় অনুযায়ী নিজে বদলে যাবে।' })),
+    el('div', { class: 'card' }, el('h3', { text: 'হিজরি তারিখ' }), fSelect(p, 'hijriAdjust', 'চাঁদ দেখা অনুযায়ী সমন্বয়', [[-2, '২ দিন কম'], [-1, '১ দিন কম'], [0, 'কোনো সমন্বয় নেই'], [1, '১ দিন বেশি'], [2, '২ দিন বেশি']], { number: true, hint: 'বাংলাদেশে চাঁদ দেখা অনুযায়ী তারিখ এক দিন এগিয়ে-পিছিয়ে যেতে পারে।' })));
+}
+function evStatus(e) { const t = todayISO(), end = e.end || e.start; if (end && end < t) return ['past', 'শেষ — ওয়েবসাইটে নেই']; if (e.showFrom && e.showFrom > t) return ['sched', 'নির্ধারিত — ' + e.showFrom + ' থেকে দেখাবে']; return ['', 'ওয়েবসাইটে দেখাচ্ছে']; }
+function tabEvents() {
+  const arr = content.events; arr.sort((a, b) => String(a.start).localeCompare(String(b.start)));
+  const past = arr.filter(e => evStatus(e)[0] === 'past').length;
+  return section('ইভেন্ট / অনুষ্ঠান', 'আগে থেকেই ইভেন্ট যোগ করে রাখতে পারেন। "কবে থেকে দেখাবে" দিলে সেই দিন নিজে থেকে ওয়েবসাইটে আসবে, আর শেষ তারিখ পার হলে নিজে থেকে সরে যাবে।',
+    listEditor(arr, { addLabel: 'নতুন ইভেন্ট যোগ করুন', newItem: () => ({ title: { en: '', bn: '' }, text: { en: '', bn: '' }, tag: { en: 'Community', bn: 'কমিউনিটি' }, meta: { en: '', bn: '' }, start: todayISO(), end: todayISO(), showFrom: '' }),
+      title: it => { const [c, l] = evStatus(it); return [bn(it.title) || 'নতুন ইভেন্ট', ' ', el('span', { class: 'chip ' + c, text: l })]; },
+      fields: (it, st) => [fBi(it, 'title', 'ইভেন্টের নাম', { onchange: st }), fBi(it, 'text', 'বিবরণ', { area: true }), fBi(it, 'tag', 'ট্যাগ (যেমন: Community / কমিউনিটি)'), fBi(it, 'meta', 'সময়/স্থান লাইন (ঐচ্ছিক)', { placeholder: '7:30 AM — Eid Prayer' }),
+        el('div', { class: 'row2' }, fText(it, 'start', 'শুরুর তারিখ', { type: 'date', onchange: st }), fText(it, 'end', 'শেষ তারিখ', { type: 'date', hint: 'এই তারিখের পর নিজে সরে যাবে।', onchange: st })),
+        fText(it, 'showFrom', 'কবে থেকে ওয়েবসাইটে দেখাবে (ঐচ্ছিক)', { type: 'date', hint: 'ফাঁকা রাখলে সংরক্ষণ করার সাথে সাথেই দেখাবে।', onchange: st })] }, rr),
+    past ? el('button', { type: 'button', class: 'btn danger small', style: 'margin-top:.6rem', onclick: () => { if (confirm(past + 'টি শেষ হয়ে যাওয়া ইভেন্ট মুছে ফেলবেন?')) { content.events = content.events.filter(e => evStatus(e)[0] !== 'past'); markDirty(); rr(); } } }, '🗑 শেষ হয়ে যাওয়া ইভেন্ট মুছুন (' + past + ')') : null);
+}
+function tabHome() {
+  return section('হোম ও পরিচিতি', null,
+    el('div', { class: 'card' }, el('h3', { text: 'ঘোষণা বার (হিরোর নিচের সবুজ লাইন)' }), fBi(content.announce, 'a', 'প্রথম লাইন'), fBi(content.announce, 'b', 'জুম্মার লাইন', { hint: '{jummah} লিখলে জুম্মার সময় নিজে বসে যাবে।' }), fBi(content.announce, 'c', 'দ্বিতীয় লাইন')),
+    el('div', { class: 'card' }, el('h3', { text: 'হিরো (উপরের অংশ)' }), fBi(content.hero, 'subtitle', 'নামের নিচের ছোট বাক্য', { area: true, rows: 2 })),
+    el('div', { class: 'card' }, el('h3', { text: 'আমাদের সম্পর্কে' }), fBi(content.about, 'p1', 'প্রথম অনুচ্ছেদ', { area: true, rows: 5 }), fBi(content.about, 'p2', 'দ্বিতীয় অনুচ্ছেদ', { area: true, rows: 5 })));
+}
+function tabServices() {
+  return section('সেবা', 'ওয়েবসাইটের "সেবা" অংশের কার্ড।', listEditor(content.services, { addLabel: 'নতুন সেবা যোগ করুন', newItem: () => ({ icon: 'star', title: { en: '', bn: '' }, text: { en: '', bn: '' }, auto: '' }),
+    title: it => [bn(it.title) || 'নতুন সেবা'],
+    fields: (it, st) => [fBi(it, 'title', 'শিরোনাম', { onchange: st }), fBi(it, 'text', 'বিবরণ', { area: true, hint: it.auto === 'jummah' ? 'ফাঁকা রাখলে জুম্মার সময় অনুযায়ী লেখাটি নিজে তৈরি হবে।' : '' }), fSelect(it, 'icon', 'আইকন', [['star', '⭐ তারা'], ['calendar', '📅 ক্যালেন্ডার'], ['book', '📖 বই'], ['heart', '❤️ হৃদয়'], ['users', '👥 মানুষ'], ['droplet', '💧 পানি']])] }, rr));
+}
+function tabCommittee() {
+  return section('মসজিদ কমিটি', 'ক্রম বদলাতে ↑ ↓ বাটন ব্যবহার করুন। "প্রধান" টিক দিলে কার্ডটি সবুজ হয়ে আলাদা দেখাবে।', listEditor(content.committee, { addLabel: 'নতুন সদস্য যোগ করুন', newItem: () => ({ name: { en: '', bn: '' }, title: { en: '', bn: '' }, photo: '', featured: false }),
+    title: it => [bn(it.name) || 'নতুন সদস্য', bn(it.title) ? ' — ' + bn(it.title) : ''],
+    fields: (it, st) => [fBi(it, 'name', 'নাম', { onchange: st }), fBi(it, 'title', 'পদবি (যেমন: President / সভাপতি)', { onchange: st }), fImage(it, 'photo', 'ছবি (ঐচ্ছিক)', it), fToggle(it, 'featured', 'প্রধান কার্ড হিসেবে দেখান')] }, rr));
+}
+function tabStaff() {
+  return section('ইমাম, মুয়াজ্জিন ও খাদেম', 'নাম, ছবি ও ছোট তথ্য (যেমন ফোন নম্বর) এখানে দিন।', listEditor(content.staff, { addLabel: 'নতুন যোগ করুন', newItem: () => ({ role: { en: '', bn: '' }, name: { en: '', bn: '' }, info: { en: '', bn: '' }, photo: '' }),
+    title: it => [bn(it.role) || 'পদ', ' — ', bn(it.name) || 'নাম'],
+    fields: (it, st) => [fBi(it, 'role', 'পদ (Imam / ইমাম)', { onchange: st }), fBi(it, 'name', 'নাম', { onchange: st }), fBi(it, 'info', 'তথ্য (ফোন, সংক্ষিপ্ত পরিচয়)'), fImage(it, 'photo', 'ছবি (ঐচ্ছিক)', it)] }, rr));
+}
+function tabVolunteers() {
+  return section('স্বেচ্ছাসেবক', null, listEditor(content.volunteers, { addLabel: 'নতুন স্বেচ্ছাসেবক যোগ করুন', newItem: () => ({ name: { en: '', bn: '' }, since: String(new Date().getFullYear()), tag: { en: '', bn: '' }, photo: '' }),
+    title: it => [bn(it.name) || 'নতুন স্বেচ্ছাসেবক'],
+    fields: (it, st) => [fBi(it, 'name', 'নাম', { onchange: st }), fText(it, 'since', 'কোন সাল থেকে', { placeholder: '2014' }), fBi(it, 'tag', 'ছোট ট্যাগ (ঐচ্ছিক)', { hint: 'যেমন: Website Designer' }), fImage(it, 'photo', 'ছবি', it)] }, rr));
+}
+function tabGallery() {
+  return section('গ্যালারি', null,
+    el('div', { class: 'card' }, el('h3', { text: 'ছবির গ্যালারি' }), listEditor(content.gallery, { addLabel: 'নতুন ছবি যোগ করুন', newItem: () => ({ category: 'interior', title: { en: '', bn: '' }, caption: { en: '', bn: '' }, image: '', pos: '' }),
+      title: it => [bn(it.title) || 'ছবি'],
+      fields: (it, st) => [fImage(it, 'image', 'ছবি', it), fBi(it, 'title', 'শিরোনাম', { onchange: st }), fBi(it, 'caption', 'ছোট বিবরণ'), fSelect(it, 'category', 'বিভাগ', [['interior', 'অভ্যন্তরীণ (Interior)'], ['events', 'ইভেন্ট (Events)']]), fText(it, 'pos', 'ছবির ফোকাস (ঐচ্ছিক)', { placeholder: 'center top', hint: 'ছবি কেটে দেখানোর সময় কোন অংশ থাকবে: center top / center bottom / left center ইত্যাদি।' })] }, rr)),
+    el('div', { class: 'card' }, el('h3', { text: 'আমাদের অবদান (স্লাইডশো)' }), listEditor(content.contributes, { addLabel: 'নতুন স্লাইড যোগ করুন', newItem: () => ({ image: '', title: { en: 'Our Contributes', bn: 'আমাদের অবদান' }, text: { en: '', bn: '' }, link: '' }),
+      title: it => [bn(it.text) || bn(it.title) || 'স্লাইড'],
+      fields: (it, st) => [fImage(it, 'image', 'ছবি (জরুরি)', it, { hint: 'ছবি না দিলে এই স্লাইড দেখানো হবে না।' }), fBi(it, 'title', 'শিরোনাম'), fBi(it, 'text', 'বিবরণ', { onchange: st }), fText(it, 'link', 'ফেসবুক পোস্টের লিংক (ঐচ্ছিক)', { type: 'url' })] }, rr)));
+}
+function tabContact() {
+  const c = content.contact, f = content.footer; f.social = f.social || {};
+  return section('যোগাযোগ ও ফুটার', null,
+    el('div', { class: 'card' }, el('h3', { text: 'ঠিকানা ও ইমেইল' }), fBi(c, 'address', 'ঠিকানা (যোগাযোগ অংশে)', { area: true, rows: 3, hint: 'লাইন ভাঙতে Enter চাপুন।' }), fBi(c, 'addressShort', 'ছোট ঠিকানা (ফুটারে)'), fText(c, 'email', 'ইমেইল', { type: 'email', hint: 'যোগাযোগ ফর্ম ও ওয়েবসাইটের সব ইমেইল লিংক এই ঠিকানা ব্যবহার করবে।' }), fBi(c, 'note', 'ইমেইলের নিচের ছোট লেখা')),
+    el('div', { class: 'card' }, el('h3', { text: 'ম্যাপ' }), fText(c, 'mapUrl', '"Open in Google Maps" লিংক', { type: 'url' }), fText(c, 'mapEmbed', 'ম্যাপ এম্বেড লিংক (ঐচ্ছিক)', { type: 'url', hint: 'Google Maps → Share → Embed a map → দেওয়া কোডের src="…" এর ভিতরের লিংকটি বসান।' })),
+    el('div', { class: 'card' }, el('h3', { text: 'ফুটার' }), fBi(f, 'about', 'ফুটারের পরিচিতি লেখা', { area: true, rows: 3 })),
+    el('div', { class: 'card' }, el('h3', { text: 'সোশ্যাল মিডিয়া লিংক' }), el('p', { class: 'help', text: 'ফাঁকা রাখলে ওই আইকন ওয়েবসাইট থেকে সরে যাবে।' }), fText(f.social, 'facebook', 'Facebook', { type: 'url' }), fText(f.social, 'instagram', 'Instagram', { type: 'url' }), fText(f.social, 'youtube', 'YouTube', { type: 'url' }), fText(f.social, 'x', 'X / Twitter', { type: 'url' })));
+}
+function tabHelp() {
+  const li = t => el('li', { text: t });
+  return section('সাহায্য', null,
+    el('div', { class: 'card' }, el('h3', { text: 'সংরক্ষণ করলে কী হয়?' }), el('ul', { style: 'padding-left:1.2rem' }, li('"সংরক্ষণ করুন" চাপলে সব পরিবর্তন একসাথে সেভ হয়। ওয়েবসাইট পরেরবার খোলার সময় নতুন লেখা দেখাবে (আলাদা করে GitHub-এ কিছু আপলোড করতে হবে না)।'), li('পরিবর্তন করে সংরক্ষণ না করে পেজ বন্ধ করলে সেগুলো হারিয়ে যাবে — তাই উপরে/নিচে "অসংরক্ষিত পরিবর্তন" লেখা দেখলে সংরক্ষণ করুন।'))),
+    el('div', { class: 'card' }, el('h3', { text: 'ছবি কীভাবে যোগ করবেন?' }), el('ul', { style: 'padding-left:1.2rem' }, li('সহজ উপায়: GitHub-এ আপনার রিপোজিটরিতে একটি "images" ফোল্ডার খুলে ছবি আপলোড করুন (Add file → Upload files)। তারপর এখানে ছবির জায়গায় images/ছবির-নাম.jpg লিখুন।'), li('অথবা postimages.org-এর মতো সাইটে ছবি আপলোড করে "Direct link" কপি করে এখানে বসান।'), li('ছবি বড় হলে (১ MB-এর বেশি) আগে ছোট করে নিন, নইলে ওয়েবসাইট ধীরে খুলবে।'))),
+    el('div', { class: 'card' }, el('h3', { text: 'রিভিউ কোথায় দেখব?' }), el('p', { text: 'প্রথম ট্যাব "⭐ রিভিউ"-এ। নতুন রিভিউ এলে সেখানে লাল সংখ্যা দেখাবে। পড়া হলে "পঠিত" চাপুন, দরকার না হলে মুছে ফেলুন।' })),
+    el('div', { class: 'card' }, el('h3', { text: 'ব্যাকআপ' }), el('p', { class: 'help', text: 'বড় পরিবর্তনের আগে ব্যাকআপ রাখুন। ভুল হলে ব্যাকআপ ফাইল থেকে ফেরত আনা যায়।' }),
+      el('div', { style: 'display:flex;gap:.6rem;flex-wrap:wrap;align-items:center' },
+        el('button', { type: 'button', class: 'btn small ghost', id: 'bkDown', onclick: downloadBackup }, '⬇ ব্যাকআপ ডাউনলোড'),
+        el('label', { class: 'btn small ghost', style: 'cursor:pointer' }, '⬆ ব্যাকআপ থেকে ফেরত আনুন', el('input', { type: 'file', accept: '.json,application/json', id: 'bkUp', style: 'display:none', onchange: e => restoreBackup(e.target.files[0]) })))),
+    el('div', { class: 'card' }, el('h3', { text: 'সমস্যা হলে' }), el('ul', { style: 'padding-left:1.2rem' }, li('"অনুমতি নেই" দেখালে: firestore.rules-এ আপনার অ্যাডমিন ইমেইল ঠিকভাবে বসানো হয়েছে কিনা এবং Rules "Publish" করা হয়েছে কিনা দেখুন।'), li('পাসওয়ার্ড ভুলে গেলে: Firebase Console → Authentication → Users থেকে নতুন পাসওয়ার্ড সেট করুন।'))));
+}
+
+function downloadBackup() {
+  const blob = new Blob([JSON.stringify(content, null, 1)], { type: 'application/json' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: 'masjid-website-backup-' + todayISO() + '.json' }); document.body.append(a); a.click(); a.remove();
+  toast('ব্যাকআপ ফাইল ডাউনলোড হয়েছে।');
+}
+function restoreBackup(file) {
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const c = JSON.parse(rd.result); if (!c || typeof c !== 'object' || !c.prayer || !Array.isArray(c.events)) throw new Error('bad');
+      const out = clone(DEFAULTS); Object.keys(c).forEach(k => { out[k] = c[k]; }); content = out; markDirty(); tab = 'home'; renderTabs(); renderTab();
+      toast('ব্যাকআপ লোড হয়েছে — "সংরক্ষণ করুন" চাপলে ওয়েবসাইটে কার্যকর হবে।');
+    } catch (e) { toast('এটি সঠিক ব্যাকআপ ফাইল নয়।', true); }
+  };
+  rd.readAsText(file);
+}
+
+// ───────── reviews ─────────
+const fmtDate = s => { try { return new Date(s).toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return s; } };
+function tabReviews() {
+  const list = reviews.filter(r => rvFilter === 'all' || !r.read);
+  const avg = reviews.length ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length) : 0;
+  const unread = reviews.filter(r => !r.read).length;
+  const head = el('div', { class: 'summary' }, el('div', null, el('span', { class: 'big', text: reviews.length ? bnDigits(avg.toFixed(1)) : '—' }), ' / ৫ গড়'), el('div', { text: 'মোট ' + bnDigits(reviews.length) + 'টি রিভিউ · অপঠিত ' + bnDigits(unread) + 'টি' }));
+  const tools = el('div', { style: 'display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem' },
+    el('button', { type: 'button', class: 'btn small' + (rvFilter === 'all' ? '' : ' ghost'), onclick: () => { rvFilter = 'all'; rr(); } }, 'সব'),
+    el('button', { type: 'button', class: 'btn small' + (rvFilter === 'unread' ? '' : ' ghost'), onclick: () => { rvFilter = 'unread'; rr(); } }, 'অপঠিত'),
+    el('button', { type: 'button', class: 'btn small ghost', onclick: refreshReviews }, '↻ রিফ্রেশ'),
+    unread ? el('button', { type: 'button', class: 'btn small ghost', onclick: markAllRead }, '✓ সব পঠিত করুন') : null);
+  const cards = list.map(r => el('div', { class: 'rv' + (r.read ? '' : ' unread') },
+    el('div', { class: 'top' }, el('span', { class: 'stars', 'aria-label': r.rating + ' / 5', text: '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating) }), el('span', { class: 'meta', text: fmtDate(r.createdAt) + (r.lang ? ' · ' + (r.lang === 'bn' ? 'বাংলা' : 'English') : '') }), r.read ? null : el('span', { class: 'chip sched', text: 'নতুন' })),
+    el('p', { text: r.comment || '(কোনো মন্তব্য নেই)' }),
+    el('div', { class: 'acts' }, r.read ? null : el('button', { type: 'button', class: 'btn small ghost', onclick: () => setRead(r, true) }, '✓ পঠিত'), el('button', { type: 'button', class: 'btn small danger', onclick: () => delReview(r) }, 'মুছুন'))));
+  return section('রিভিউ', 'ওয়েবসাইটের দর্শকরা যে রিভিউ দিয়েছেন সেগুলো এখানে জমা হয়।', head, tools, cards.length ? cards : el('div', { class: 'card', text: rvFilter === 'unread' ? 'কোনো অপঠিত রিভিউ নেই 🎉' : 'এখনো কোনো রিভিউ আসেনি।' }));
+}
+async function refreshReviews() { try { reviews = await fetchReviews(); renderTabs(); renderTab(); } catch (e) { toast('রিভিউ আনা যায়নি: ' + e.message, true); } }
+async function setRead(r, v) { try { await api('reviews/' + encodeURIComponent(r.id), { method: 'PATCH', query: 'updateMask.fieldPaths=read', body: { fields: { read: { booleanValue: v } } } }); r.read = v; renderTabs(); renderTab(); } catch (e) { toast('হয়নি: ' + e.message, true); } }
+async function markAllRead() { for (const r of reviews.filter(x => !x.read)) { try { await api('reviews/' + encodeURIComponent(r.id), { method: 'PATCH', query: 'updateMask.fieldPaths=read', body: { fields: { read: { booleanValue: true } } } }); r.read = true; } catch (e) { toast('কিছু রিভিউ পঠিত করা যায়নি।', true); break; } } renderTabs(); renderTab(); }
+async function delReview(r) { if (!confirm('এই রিভিউটি মুছে ফেলবেন?')) return; try { await api('reviews/' + encodeURIComponent(r.id), { method: 'DELETE' }); reviews = reviews.filter(x => x !== r); renderTabs(); renderTab(); } catch (e) { toast('মোছা যায়নি: ' + e.message, true); } }
+
+// ───────── start ─────────
+async function openApp() {
+  $('#login').hidden = true; $('#app').hidden = false; $('#who').textContent = auth.email || '';
+  try { content = await loadContent(); } catch (e) { toast('ওয়েবসাইটের কনটেন্ট আনা যায়নি: ' + e.message, true); content = clone(DEFAULTS); }
+  try { reviews = await fetchReviews(); }
+  catch (e) { if (e.status === 403) { toast('এই ইমেইলকে অ্যাডমিন হিসেবে অনুমতি দেওয়া নেই — firestore.rules দেখুন।', true); } else if (e.message === 'login') { return logout(); } else toast('রিভিউ আনা যায়নি: ' + e.message, true); }
+  markDirty(false); renderTabs(); renderTab();
+}
+function logout() { auth = null; saveAuth(); content = null; reviews = []; dirty = false; $('#app').hidden = true; $('#login').hidden = false; $('#password').value = ''; }
+$('#logout').addEventListener('click', () => { if (!dirty || confirm('অসংরক্ষিত পরিবর্তন আছে। তবুও লগআউট করবেন?')) logout(); });
+$('#saveBtn').addEventListener('click', saveContent);
+$('#loginForm').addEventListener('submit', async e => {
+  e.preventDefault(); const m = $('#loginMsg'), b = $('#loginBtn'); m.className = 'msg'; m.textContent = '';
+  if (!KEY || !PROJECT) { m.className = 'msg err'; m.textContent = 'firebase-config.js ফাইলে Firebase-এর তথ্য বসানো হয়নি।'; return; }
+  b.disabled = true; b.textContent = 'লগইন হচ্ছে…';
+  try { await signIn($('#email').value.trim(), $('#password').value); await openApp(); }
+  catch (err) { m.className = 'msg err'; m.textContent = err.message; }
+  finally { b.disabled = false; b.textContent = 'লগইন করুন'; }
+});
+if (!KEY || !PROJECT) $('#cfgWarn').hidden = false;
+try { const saved = JSON.parse(localStorage.getItem('masjid-admin-auth') || 'null'); if (saved && saved.refreshToken && KEY) { auth = saved; ensureToken().then(openApp).catch(() => { auth = null; saveAuth(); }); } } catch (e) {}
+window.__admin = { get content() { return content; } };   // handy for debugging in the browser console
+})();
+</script>
+</body>
+</html>
