@@ -4,7 +4,7 @@ service cloud.firestore {
 
     // ★ নিচের ইমেইলটি বদলে আপনার অ্যাডমিন ইমেইল দিন (Firebase-এ যে ইমেইল দিয়ে ইউজার বানিয়েছেন)
     function isAdmin() {
-      return request.auth != null && request.auth.token.email == 'tarifulswork@gmail.com';
+      return request.auth != null && request.auth.token.email =='tarifulswork@gmail.com';
     }
 
     // ওয়েবসাইটের কনটেন্ট: সবাই পড়তে পারবে, শুধু অ্যাডমিন বদলাতে পারবে
